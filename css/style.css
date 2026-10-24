@@ -1,0 +1,122 @@
+/* Font yang sama seperti desain awal, disimpan lokal agar tidak bergantung CDN. */
+@font-face { font-family: Poppins; font-style: normal; font-weight: 400; font-display: swap; src: url('../assets/fonts/poppins-400.ttf') format('truetype'); }
+@font-face { font-family: Poppins; font-style: normal; font-weight: 700; font-display: swap; src: url('../assets/fonts/poppins-700.ttf') format('truetype'); }
+@font-face { font-family: Poppins; font-style: normal; font-weight: 800; font-display: swap; src: url('../assets/fonts/poppins-800.ttf') format('truetype'); }
+@font-face { font-family: Poppins; font-style: normal; font-weight: 900; font-display: swap; src: url('../assets/fonts/poppins-900.ttf') format('truetype'); }
+
+:root {
+  --font-ui: Poppins, 'Trebuchet MS', Arial, sans-serif;
+  --ink: #282052;
+  --ink-muted: #4c4273;
+  --pink: #f3b2dc;
+  --paper: #f5f0ff;
+  --paper-blue: #e6f5ff;
+  --error: #92274f;
+  --border: 3px solid var(--ink);
+  --shadow-small: 3px 4px 0 var(--ink);
+  --shadow-card: 7px 9px 0 var(--ink);
+  --page-gutter: 1.25rem;
+  --panel-padding: 1.25rem;
+  --content-width: 42rem;
+  --title-unit: clamp(5rem, 23vw, 7rem);
+  --frame-gradient: linear-gradient(115deg, #1738b6, #4f83ff, #7cecff, #2652ff, #1738b6);
+  --star-polygon: polygon(50% 0%, 61% 34%, 98% 35%, 68% 57%, 79% 91%, 50% 71%, 21% 91%, 32% 57%, 2% 35%, 39% 34%);
+}
+*, *::before, *::after { box-sizing: border-box; }
+/* hidden adalah kontrak UI; satu-satunya !important di stylesheet utama. */
+[hidden] { display: none !important; }
+html { font-family: var(--font-ui); color-scheme: light; line-height: 1.5; }
+body { margin: 0; min-height: 100vh; min-height: 100svh; position: relative; isolation: isolate; background: #061455; color: #f7f4ff; }
+h1, h2, h3, p, dl, dd { margin: 0; }
+button, input { font: inherit; }
+button, a, input { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid #337ec7; outline-offset: 5px; }
+.view-heading:focus-visible { outline: 3px solid #337ec7; outline-offset: 5px; border-radius: .25rem; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Layer 0: base + gambar opsional, lalu dua cahaya. Layer 1: artwork. Layer 2: UI. */
+.ocean-background { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: linear-gradient(165deg, #020b3f 0%, #092b8a 60%, #125ba1 100%); }
+.ocean-light { position: absolute; inset: -20%; }
+.ocean-light--primary { background: radial-gradient(ellipse at 68% 76%, rgb(173 235 255 / 85%) 0%, rgb(87 201 239 / 65%) 20%, rgb(33 119 222 / 24%) 42%, transparent 65%); }
+.ocean-light--secondary { background: radial-gradient(ellipse at 20% 38%, rgb(36 85 246 / 35%), transparent 46%); }
+.asset-layer { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+.page-shell { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 3rem; min-height: 100vh; min-height: 100svh; padding: 2.5rem var(--page-gutter) 1.5rem; padding-left: max(var(--page-gutter), env(safe-area-inset-left)); padding-right: max(var(--page-gutter), env(safe-area-inset-right)); padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+.announcement { width: 100%; max-width: var(--content-width); min-width: 0; margin: auto; }
+.announcement-header { position: relative; z-index: 2; text-align: center; }
+.eyebrow { display: inline-block; max-width: 100%; padding: .65rem 1.15rem; border: var(--border); border-radius: 99rem; background: #dcd2ff; color: var(--ink); box-shadow: var(--shadow-small); font-size: .6875rem; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; transform: rotate(-4deg); }
+
+/* Satu ukuran dasar menjaga proporsi STAR, bintang, dan pill di semua layar. */
+.starup-title { position: relative; isolation: isolate; display: flex; flex-direction: column; align-items: center; width: fit-content; max-width: 100%; margin: -.04em auto 0; padding: .04em .08em .05em; font: 800 var(--title-unit)/1 var(--font-ui); user-select: none; }
+.starup-title__star { position: relative; z-index: 0; display: block; padding: .04em .06em .12em; font-weight: 800; line-height: .97; letter-spacing: -.07em; white-space: nowrap; background: linear-gradient(170deg, #18329a 0%, #426aff 28%, #8de8ff 50%, #426aff 72%, #18329a 100%); background-size: 100% 300%; background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-stroke: .015em #d7f8ff; }
+.starup-title__badge { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; margin-top: -.34em; margin-left: .32em; width: 2.1em; height: .88em; }
+.starup-title__star-frame { position: absolute; z-index: 2; width: 1.05em; height: 1.05em; left: -.12em; top: -.14em; padding: .065em; background: var(--frame-gradient); background-size: 300% 100%; clip-path: var(--star-polygon); transform: rotate(-8deg); }
+.starup-title__star-fill { display: block; width: 100%; height: 100%; background: #d8cff7; clip-path: var(--star-polygon); }
+.starup-title__pill { display: flex; align-items: center; justify-content: center; width: 1.6em; height: .75em; margin-left: .56em; border: .045em solid transparent; border-radius: .25em; background: linear-gradient(#d7cdf4, #d7cdf4) padding-box, var(--frame-gradient) border-box; background-size: 100% 100%, 300% 100%; box-shadow: 0 .045em .08em rgb(10 30 106 / 22%); transform: rotate(-3deg); }
+.starup-title__up { display: block; padding: .02em .12em .03em .18em; color: #262665; font-size: .68em; font-style: italic; font-weight: 800; letter-spacing: -.09em; line-height: 1; }
+
+.announcement-views { margin-top: clamp(1.25rem, 4vw, 2rem); min-width: 0; }
+.view { position: relative; z-index: 2; display: grid; gap: 1.5rem; min-width: 0; }
+.view-intro { text-align: center; }
+.view-heading { font-size: clamp(1.65rem, 6.8vw, 2.375rem); font-weight: 700; line-height: 1.23; letter-spacing: -.045em; overflow-wrap: anywhere; }
+.view-description { max-width: 44ch; margin: .85rem auto 0; color: #e1dcf5; font-size: clamp(.9375rem, 3.8vw, 1.125rem); line-height: 1.7; }
+.form-card, .state-card { position: relative; min-width: 0; padding: var(--panel-padding); border: var(--border); border-radius: 2rem; background: linear-gradient(120deg, #e1e6ff, #e9dcfb); box-shadow: var(--shadow-card); color: var(--ink); }
+.form-field { position: relative; z-index: 1; display: grid; gap: .85rem; }
+.form-label { display: block; font-size: .875rem; font-weight: 900; text-align: center; }
+.submit-row { display: grid; gap: .85rem; min-width: 0; }
+.form-input { width: 100%; min-width: 0; min-height: 3.5rem; padding: .8rem .9rem; border: var(--border); border-radius: .875rem; background: var(--paper); color: var(--ink); font-size: 1rem; font-weight: 700; }
+.form-input::placeholder { color: #6a6087; opacity: 1; }
+.form-input:focus { background: #fffaff; box-shadow: 0 0 0 4px rgb(51 126 199 / 20%); }
+.form-input[aria-invalid="true"] { border-color: var(--error); background: #fff0f6; }
+.form-input[aria-invalid="true"]:focus { outline-color: var(--error); }
+.form-hint, .form-error { font-size: .75rem; line-height: 1.6; }
+.form-hint { color: var(--ink-muted); }
+.form-error { min-height: 1.6em; color: var(--error); font-weight: 700; }
+.button { display: inline-flex; align-items: center; justify-content: center; width: 100%; min-width: 0; min-height: 3.5rem; padding: .8rem 1rem; border: var(--border); border-radius: .875rem; box-shadow: var(--shadow-small); color: var(--ink); font-size: .9375rem; font-weight: 900; line-height: 1.4; text-align: center; text-decoration: none; overflow-wrap: anywhere; cursor: pointer; touch-action: manipulation; }
+.button-primary { background: var(--pink); }
+.button-secondary { background: var(--paper-blue); }
+.button:disabled { background: #e6bfdc; color: #62506c; box-shadow: 2px 3px 0 #655278; border-color: #655278; cursor: wait; }
+.state-card { gap: 1.25rem; text-align: center; overflow-wrap: anywhere; }
+.section-label { color: #574383; font-size: .6875rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+.state-card .view-description { margin-top: 0; color: var(--ink-muted); }
+/* Checking dan hasil memakai kartu yang sama; tidak ada tinggi tetap. */
+.checking-view { gap: 1rem; padding-block: 2rem; justify-items: center; }
+.gacha { display: grid; place-items: center; width: 8rem; height: 8rem; }
+.gacha-emote, .result-emote { font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; font-weight: 400; font-style: normal; line-height: 1; }
+.gacha-emote { display: block; font-size: 6rem; transform-origin: center 65%; }
+.result-card { --emote-size: clamp(4.75rem, 20vw, 6.5rem); margin-top: calc(var(--emote-size) * .55 + 1rem); padding-top: calc(var(--emote-size) * .65 + 1rem); padding-bottom: 1.75rem; gap: 1.25rem; }
+.result-emote { position: absolute; top: 0; left: 50%; translate: -50% -45%; display: grid; place-items: center; width: var(--emote-size); height: var(--emote-size); font-size: var(--emote-size); pointer-events: none; }
+.result-emote > span { display: block; filter: drop-shadow(3px 5px 0 var(--ink)); }
+.result-intro { display: grid; align-items: center; gap: .75rem; min-width: 0; }
+.result-heading { font-size: clamp(1.85rem, 7.4vw, 2.5rem); font-weight: 800; line-height: 1.2; letter-spacing: -.035em; }
+.participant-name { min-width: 0; font-size: clamp(1.5rem, 6.2vw, 2rem); font-weight: 800; line-height: 1.35; overflow-wrap: anywhere; }
+.result-summary, .result-message { min-width: 0; color: var(--ink); font-size: clamp(1rem, 4.5vw, 1.375rem); line-height: 1.6; overflow-wrap: anywhere; }
+.result-actions { display: grid; gap: 1rem; margin-top: .75rem; min-width: 0; }
+.result-actions .button { min-height: 3.75rem; border-radius: 1.25rem; }
+.button-result { background: linear-gradient(110deg, #7ce0f4, #4872ff); }
+/* Hijau hanya untuk aksi WhatsApp, sesuai tombol pada referensi hasil. */
+.button-contact { background: #187b40; color: var(--paper); }
+.supporting-message { padding: .75rem 1rem; border: 1.5px solid #96799f; border-radius: .875rem; background: #f6e1f2; color: var(--ink); font-size: .875rem; }
+.site-footer { position: relative; text-align: center; font-size: .75rem; color: #e1dcf5; }
+.site-footer strong { color: var(--paper); }
+
+/* Slot tidak menangkap klik. Gambar baru masuk DOM setelah load berhasil. */
+.asset-slot { position: absolute; pointer-events: none; }
+.asset-slot img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.asset-slot--background { inset: 0; }
+.asset-slot--background img { object-fit: cover; }
+.asset-slot--hero { top: 5%; right: 2%; width: min(19vw, 19rem); height: min(26vw, 26rem); }
+.asset-slot--jellyfish-left { top: 30%; left: 3%; width: min(12vw, 12rem); height: min(19vw, 19rem); }
+.asset-slot--jellyfish-right { top: 49%; right: 3%; width: min(10vw, 10rem); height: min(15vw, 15rem); }
+.asset-slot--coral-left, .asset-slot--coral-right { bottom: 0; width: min(23vw, 23rem); height: min(27vw, 27rem); }
+.asset-slot--coral-left { left: 0; }
+.asset-slot--coral-right { right: 0; }
+.asset-slot--coral-left img { object-position: left bottom; }
+.asset-slot--coral-right img { object-position: right bottom; }
+.asset-slot--starfish-left { top: 11%; left: 8%; width: min(9vw, 8rem); height: min(9vw, 8rem); }
+.asset-slot--starfish-right { bottom: 11%; right: 21%; width: min(8vw, 7rem); height: min(8vw, 7rem); }
+.asset-slot--sparkles { top: 4%; left: 29%; width: min(7vw, 7rem); height: min(6vw, 6rem); }
+.asset-slot--form { z-index: 0; top: -2.4rem; right: -.25rem; width: 4.5rem; height: 3.25rem; }
+.asset-slot--state { position: relative; width: 6rem; height: 6rem; margin-inline: auto; }
+.asset-placeholder { display: grid; place-items: center; width: 100%; height: 100%; padding: .25rem; border: 1px dashed rgb(212 241 255 / 65%); border-radius: .75rem; background: rgb(43 102 147 / 18%); color: #d9efff; font: 700 clamp(.5rem, 1vw, .6875rem)/1.4 var(--font-ui); text-align: center; overflow-wrap: anywhere; }
+.asset-slot--background .asset-placeholder { height: 1.5rem; width: fit-content; margin: .4rem; border-radius: .25rem; font-size: .5rem; }
+.asset-slot--form .asset-placeholder, .asset-slot--state .asset-placeholder { color: #353267; border-color: #6e6ba0; background: rgb(203 194 244 / 60%); }
