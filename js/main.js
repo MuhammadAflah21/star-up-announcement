@@ -68,13 +68,12 @@
     if (!value) return 'Isi NIM kamu dulu, ya.';
     if (/\s/.test(value)) return 'NIM tidak boleh mengandung spasi.';
     if (/[^A-Z0-9]/.test(value)) return 'Gunakan huruf A–Z dan angka 0–9 saja, tanpa simbol.';
-    if (value.length < 8) return 'NIM harus tepat 8 karakter; isianmu masih kurang.';
-    if (value.length > 8) return 'NIM harus tepat 8 karakter; isianmu terlalu panjang.';
+    if (value.length < 9) return 'NIM harus tepat 9 karakter; isianmu masih kurang.';
+    if (value.length > 9) return 'NIM harus tepat 9 karakter; isianmu terlalu panjang.';
     if (!/[A-Z]/.test(value)) return 'NIM perlu memuat minimal satu huruf.';
     if (!/[0-9]/.test(value)) return 'NIM perlu memuat minimal satu angka.';
     return '';
   }
-
   /**
    * Satu titik integrasi backend. Belum ada fetch atau data peserta lokal.
    * Ganti ISI fungsi ini saat layanan resmi siap; gunakan options.signal untuk fetch.
@@ -83,9 +82,62 @@
    * @param {{signal: AbortSignal}} options Sinyal pembatalan ketika timeout.
    * @returns {Promise<object>} Respons dengan status kontrak.
    */
-  async function checkNim(nim, options) {
-    return { status: 'service-unavailable' };
+  async function checkNim(nim, options = {}) {
+      try {
+          const response = await fetch("/api/cek-nim", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ nim }),
+              cache: "no-store",
+              signal: options.signal
+          });
+
+          const hasil = await response.json();
+
+          // Tangani respons error dari server
+          if (!response.ok) {
+              console.error(
+                  "API gagal:",
+                  response.status,
+                  hasil.message
+              );
+
+              return {
+                  status: "service-unavailable"
+              };
+          }
+
+          // Pastikan hasil sesuai tiga kondisi seleksi
+          const statusValid = [
+              "accepted",
+              "not-accepted",
+              "not-found"
+          ];
+
+          if (!statusValid.includes(hasil.status)) {
+              return {
+                  status: "service-unavailable"
+              };
+          }
+
+          return hasil;
+
+      } catch (error) {
+          // Pertahankan mekanisme pembatalan request
+          if (error.name === "AbortError") {
+              throw error;
+          }
+
+          console.error("Koneksi backend gagal:", error);
+
+          return {
+              status: "service-unavailable"
+          };
+      }
   }
+
 
   async function requestResult(nim) {
     const controller = new AbortController();

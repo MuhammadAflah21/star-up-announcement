@@ -47,12 +47,12 @@
               <label for="nim-input" class="form-label">Tulis NIM kamu di sini</label>
               <div class="submit-row">
                 <input id="nim-input" class="form-input" name="nim" type="text"
-                  placeholder="Contoh: H1D25001" autocomplete="off" autocapitalize="characters"
-                  spellcheck="false" inputmode="text" pattern="(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{8}"
+                  placeholder="Contoh: H1D025001" autocomplete="off" autocapitalize="characters"
+                  spellcheck="false" inputmode="text" pattern="(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{9}"
                   aria-describedby="nim-hint nim-error" aria-invalid="false" required>
                 <button id="check-button" class="button button-primary" type="submit" disabled>Buka hasil</button>
               </div>
-              <p id="nim-hint" class="form-hint">8 karakter, gabungan huruf dan angka. Tanpa spasi atau simbol.</p>
+              <p id="nim-hint" class="form-hint">9 karakter, gabungan huruf dan angka. Tanpa spasi atau simbol.</p>
               <p id="nim-error" class="form-error" role="alert" aria-atomic="true"></p>
             </div>
           </form>
