@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Pengumuman hasil akhir open recruitment panitia STAR UP.">
+  <meta name="theme-color" content="#061455">
+  <title>STAR UP — Pengumuman panitia</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/animation.css">
+  <script src="js/animation.js" defer></script>
+  <script src="js/result-effects.js" defer></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <div class="ocean-background" aria-hidden="true">
+    <div id="asset-background" data-asset="background" class="asset-slot asset-slot--background" hidden></div>
+    <div class="ocean-light ocean-light--primary"></div>
+    <div class="ocean-light ocean-light--secondary"></div>
+  </div>
+
+  <div id="result-effects" class="result-effects" aria-hidden="true"></div>
+
+  <div id="page" class="page-shell">
+    <div class="asset-layer" aria-hidden="true">
+      <div data-asset="hero" class="asset-slot asset-slot--hero" hidden></div>
+      <div data-asset="left" class="asset-slot asset-slot--jellyfish-left" hidden></div>
+      <div data-asset="right" class="asset-slot asset-slot--jellyfish-right" hidden></div>
+      <div data-asset="coralLeft" class="asset-slot asset-slot--coral-left" hidden></div>
+      <div data-asset="coralRight" class="asset-slot asset-slot--coral-right" hidden></div>
+      <div data-asset="starfishLeft" class="asset-slot asset-slot--starfish-left" hidden></div>
+      <div data-asset="starfishRight" class="asset-slot asset-slot--starfish-right" hidden></div>
+      <div data-asset="sparkles" class="asset-slot asset-slot--sparkles" hidden></div>
+    </div>
+    <main id="main-content" class="announcement">
+      <header class="announcement-header">
+        <p class="eyebrow">Pengumuman panitia</p>
+        <h1 class="starup-title" aria-label="STAR UP">
+          <span class="starup-title__star" aria-hidden="true">STAR</span>
+          <span class="starup-title__badge" aria-hidden="true">
+            <span class="starup-title__star-frame"><span class="starup-title__star-fill"></span></span>
+            <span class="starup-title__pill"><span class="starup-title__up">UP</span></span>
+          </span>
+        </h1>
+      </header>
+
+      <p id="status-announcement" class="sr-only" role="status" aria-atomic="true"></p>
+      <div id="announcement-views" class="announcement-views" data-state="landing" aria-busy="false">
+        <section id="landing-view" class="view" aria-labelledby="landing-heading">
+          <div class="view-intro">
+            <h2 id="landing-heading" class="view-heading" tabindex="-1">Udah siap tahu hasilnya?</h2>
+            <p class="view-description">Masukkan NIM kamu dan lihat apakah kamu berhasil menjadi bagian dari Staf Star Up!</p>
+          </div>
+          <form id="nim-form" class="form-card" novalidate>
+            <div data-asset="form" class="asset-slot asset-slot--form" aria-hidden="true" hidden></div>
+            <div class="form-field">
+              <label for="nim-input" class="form-label">Tulis NIM kamu di sini</label>
+              <div class="submit-row">
+                <input id="nim-input" class="form-input" name="nim" type="text"
+                  placeholder="Contoh: H1D025001" autocomplete="off" autocapitalize="characters"
+                  spellcheck="false" inputmode="text" pattern="(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{9}"
+                  aria-describedby="nim-hint nim-error" aria-invalid="false" required>
+                <button id="check-button" class="button button-primary" type="submit" disabled>Buka hasil</button>
+              </div>
+              <p id="nim-hint" class="form-hint">9 karakter, gabungan huruf dan angka. Tanpa spasi atau simbol.</p>
+              <p id="nim-error" class="form-error" role="alert" aria-atomic="true"></p>
+            </div>
+          </form>
+          <noscript><p class="supporting-message">Aktifkan JavaScript untuk memeriksa NIM dan membuka informasi layanan.</p></noscript>
+        </section>
+
+
+        <section id="checking-view" class="view state-card checking-view" aria-labelledby="checking-heading" hidden>
+          <div id="gacha" class="gacha" data-phase="idle" aria-hidden="true">
+            <span class="gacha-visual"><span class="gacha-orb"></span></span>
+          </div>
+          <h2 id="checking-heading" class="view-heading" tabindex="-1">Sedang mencari hasilmu...</h2>
+          <p class="view-description">Sebentar, ya. Hasilmu sedang diperiksa.</p>
+        </section>
+
+        <section id="result-view" class="view state-card result-card" aria-labelledby="result-heading" hidden>
+          <div id="result-media" class="result-media" aria-hidden="true" hidden></div>
+          <div class="result-intro">
+            <h2 id="result-heading" class="view-heading result-heading" tabindex="-1"></h2>
+            <p id="result-name" class="participant-name" hidden></p>
+          </div>
+          <p id="result-message" class="result-message" hidden></p>
+          <div class="result-actions">
+            <button class="button button-result" type="button" data-action="reset">Cek NIM lainnya</button>
+            <a id="coordinator-contact" class="button button-contact" target="_blank" rel="noopener noreferrer" hidden>
+              <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.4-4.7a8.5 8.5 0 1 1 16.1-4.2Z"/>
+                <path d="m8 7 2 3-1.2 1.2a8.3 8.3 0 0 0 4 4L14 14l3 2c-.5 1.4-1.7 2-3.2 1.5a12.4 12.4 0 0 1-7.3-7.3C6 8.7 6.6 7.5 8 7Z"/>
+              </svg>
+              <span>Contact Person</span>
+            </a>
+          </div>
+        </section>
+
+        <section id="not-found-view" class="view state-card result-card" aria-labelledby="not-found-heading" hidden>
+          <div data-asset="notFound" class="result-media" aria-hidden="true" hidden></div>
+          <h2 id="not-found-heading" class="view-heading result-heading" tabindex="-1">HMMM...</h2>
+          <p class="result-message">NIM tidak ditemukan.</p>
+          <div class="result-actions">
+            <button class="button button-result" type="button" data-action="reset">Cek NIM lainnya</button>
+          </div>
+        </section>
+
+        <section id="rate-limited-view" class="view state-card" aria-labelledby="rate-limited-heading" hidden>
+          <p class="section-label">Batas percobaan tercapai</p>
+          <h2 id="rate-limited-heading" class="view-heading" tabindex="-1">Terlalu banyak percobaan</h2>
+          <p id="rate-limited-message" class="view-description"></p>
+          <button class="button button-secondary" type="button" data-action="retry">Kembali ke form</button>
+        </section>
+
+        <section id="service-unavailable-view" class="view state-card" aria-labelledby="service-unavailable-heading" hidden>
+          <p class="section-label">Layanan belum tersedia</p>
+          <h2 id="service-unavailable-heading" class="view-heading" tabindex="-1">Hasil belum bisa dicek.</h2>
+          <p class="view-description">Layanan pengecekan hasil belum diaktifkan atau sementara tidak tersedia. Silakan kembali lagi nanti, ya.</p>
+          <button class="button button-secondary" type="button" data-action="retry">Kembali ke form</button>
+        </section>
+
+        <section id="error-view" class="view state-card" aria-labelledby="error-heading" hidden>
+          <p class="section-label">Ada sedikit kendala</p>
+          <h2 id="error-heading" class="view-heading" tabindex="-1">Ups, coba lagi, yuk.</h2>
+          <p class="view-description">Hasil belum berhasil diperiksa. Kembali ke form untuk mencoba lagi.</p>
+          <button class="button button-secondary" type="button" data-action="retry">Coba lagi</button>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer"><p>presented by <strong>@SoedirmanPerwira</strong></p></footer>
+
+  </div>
+</body>
+</html>

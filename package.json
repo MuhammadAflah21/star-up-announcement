@@ -1,0 +1,16 @@
+{
+  "name": "star-up-announcement",
+  "version": "1.0.0",
+  "description": "Website pengumuman hasil seleksi panitia STAR UP",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  }
+}

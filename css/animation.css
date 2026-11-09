@@ -1,0 +1,83 @@
+:root { --duration-exit: 140ms; --ease-soft: cubic-bezier(.22, 1, .36, 1); }
+.ocean-light--primary { animation: ocean-drift-primary 23s ease-in-out infinite; }
+.ocean-light--secondary { animation: ocean-drift-secondary 29s ease-in-out -9s infinite; }
+.starup-title { animation: title-float 5.6s ease-in-out infinite; }
+.starup-title__star { animation: star-shimmer 2.6s linear infinite, star-glow 2.8s ease-in-out infinite; }
+.starup-title__star-frame { animation: star-frame-shimmer 3.4s linear infinite; }
+.starup-title__pill { animation: pill-frame-shimmer 3.4s linear infinite; }
+.view:not([hidden]) { animation: view-enter 260ms var(--ease-soft) both; }
+.view.is-leaving:not([hidden]) { animation: view-exit var(--duration-exit) ease-in both; }
+/* JavaScript mengatur fase; CSS mengatur gerakan gambar/orb. */
+.gacha[data-phase="spinning"] .gacha-visual { animation: gacha-turn 190ms ease-in-out infinite; }
+.gacha[data-phase="settling"] .gacha-visual { animation: gacha-turn 280ms ease-in-out both; }
+.gacha[data-phase="resolved"] .gacha-visual { animation: gacha-land 480ms var(--ease-soft) both; }
+.result-card:not([hidden]) { animation: result-reveal 480ms var(--ease-soft) both; }
+.result-card.is-leaving:not([hidden]) { animation: view-exit var(--duration-exit) ease-in both; }
+.asset-slot--hero img, .asset-slot--jellyfish-left img, .asset-slot--jellyfish-right img { animation: jellyfish-float 8s ease-in-out infinite; }
+.asset-slot--jellyfish-left img { animation-duration: 10s; animation-delay: -3s; }
+.asset-slot--jellyfish-right img { animation-duration: 9s; animation-delay: -6s; }
+.asset-slot--coral-left img, .asset-slot--coral-right img { transform-origin: center bottom; animation: coral-sway 14s ease-in-out infinite; }
+.asset-slot--coral-right img { animation-duration: 17s; animation-delay: -6s; }
+.asset-slot--starfish-left img, .asset-slot--starfish-right img { animation: starfish-float 12s ease-in-out infinite; }
+.asset-slot--starfish-right img { animation-duration: 15s; animation-delay: -4s; }
+.asset-slot--sparkles img { animation: sparkle-twinkle 5s ease-in-out -2s infinite; }
+.asset-slot--form img { animation: starfish-float 13s ease-in-out -7s infinite; }
+.button { transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease; }
+.form-input { transition: background-color 180ms ease, box-shadow 180ms ease; }
+/* Layer khusus emote rain: di belakang konten, tidak mengubah layout. */
+.result-effects { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+.result-particle { position: absolute; top: -64px; width: var(--rain-size); height: var(--rain-size); opacity: 0; animation: result-emote-fall var(--rain-duration) linear var(--rain-delay) both; }
+.result-particle-image { display: block; width: 100%; height: 100%; object-fit: contain; }
+@keyframes result-emote-fall {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; }
+  12%, 75% { opacity: .85; }
+  100% { transform: translate3d(var(--rain-drift), calc(100vh + 128px), 0) rotate(var(--rain-rotation)); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .result-effects { display: none; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .button:not(:disabled):hover { box-shadow: 4px 6px 0 var(--ink); }
+  .button-secondary:not(:disabled):hover { background: #cceaff; }
+}
+.button:not(:disabled):active { transform: translate(1px, 2px); box-shadow: 1px 2px 0 var(--ink); }
+@keyframes ocean-drift-primary {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: .95; }
+  25% { transform: translate(-8%, -6%) scale(1.06); opacity: 1; }
+  50% { transform: translate(5%, -10%) scale(1.02); opacity: .9; }
+  75% { transform: translate(-3%, 5%) scale(1.08); opacity: 1; }
+}
+@keyframes ocean-drift-secondary {
+  0%, 100% { transform: translate(3%, -2%); }
+  30% { transform: translate(10%, 8%); }
+  65% { transform: translate(-6%, 4%); }
+}
+@keyframes title-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes star-shimmer { 0%, 100% { background-position: 50% 0%; } 50% { background-position: 50% 100%; } }
+@keyframes star-glow { 0%, 100% { text-shadow: 0 0 .07em rgb(124 223 255 / 12%); } 50% { text-shadow: 0 0 .14em rgb(145 235 255 / 45%); } }
+@keyframes star-frame-shimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@keyframes pill-frame-shimmer { 0%, 100% { background-position: 0 0, 0% 50%; } 50% { background-position: 0 0, 100% 50%; } }
+@keyframes view-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes view-exit { from { opacity: 1; } to { opacity: 0; } }
+@keyframes gacha-turn {
+  0% { opacity: .35; transform: translateY(7px) scale(.94); }
+  40%, 65% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: .35; transform: translateY(-7px) scale(.96); }
+}
+@keyframes gacha-land {
+  0% { opacity: .5; transform: translateY(5px) scale(.94); }
+  55% { opacity: 1; transform: translateY(-3px) scale(1.06); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes result-reveal {
+  from { opacity: 0; transform: translateY(10px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes jellyfish-float { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-9px) rotate(2deg); } }
+@keyframes coral-sway { 0%, 100% { transform: translateY(0) rotate(-.8deg); } 50% { transform: translateY(-4px) rotate(.8deg); } }
+@keyframes starfish-float { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-5px) rotate(3deg); } }
+@keyframes sparkle-twinkle { 0%, 100% { opacity: .65; transform: scale(.96); } 50% { opacity: 1; transform: scale(1); } }
+/* Aksesibilitas berlaku untuk semua komponen, termasuk artwork drop-in. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

@@ -1,0 +1,57 @@
+/* Arah konten selalu vertikal. Breakpoint hanya mengubah ukuran/komposisi. */
+@media (min-width: 640px) {
+  :root { --page-gutter: 2rem; --panel-padding: 1.75rem; --title-unit: clamp(7rem, 13vw, 9rem); }
+  .page-shell { padding-top: 3rem; }
+  .eyebrow { font-size: .8125rem; padding-inline: 1.5rem; }
+  .submit-row { grid-template-columns: minmax(0, 1fr) 9.5rem; align-items: stretch; }
+  .form-label { font-size: 1rem; }
+  .site-footer { font-size: .8125rem; }
+}
+@media (min-width: 1024px) {
+  :root { --title-unit: 9rem; --shadow-card: 9px 10px 0 var(--ink); }
+  .page-shell { padding-block: 2.75rem 1.75rem; gap: 2.75rem; }
+}
+@media (max-width: 1023px) {
+  .asset-slot--hero { right: 0; top: 4%; width: 12vw; height: 18vw; }
+  .asset-slot--jellyfish-left { left: 0; top: 28%; width: 8vw; height: 12vw; }
+  .asset-slot--jellyfish-right { right: 0; top: 33%; width: 7vw; height: 11vw; }
+  .asset-slot--starfish-left { left: 1%; top: 6%; width: 8vw; height: 8vw; }
+  .asset-slot--starfish-right { right: 13%; bottom: 4.5rem; width: 8vw; height: 8vw; }
+  .asset-slot--coral-left, .asset-slot--coral-right { width: 18vw; height: 20vw; }
+  .asset-slot--sparkles { top: .25rem; left: 13%; }
+}
+@media (max-width: 639px) {
+  :root {
+    --page-gutter: 1rem;
+    --panel-padding: clamp(1rem, 4.6vw, 1.5rem);
+    --title-unit: clamp(6rem, 30vw, 8.1rem);
+  }
+  .page-shell { padding-top: 2.5rem; gap: 3rem; }
+  .announcement { margin-block: 0; }
+  .site-footer { margin-top: auto; font-size: .8125rem; }
+  .eyebrow { font-size: clamp(.75rem, 3.2vw, .875rem); padding: .7rem 1rem; }
+  .announcement-views { margin-top: 1.4rem; }
+  #landing-view { gap: 1.5rem; }
+  .view-intro .view-heading { font-size: clamp(1.85rem, 8vw, 2.25rem); }
+  .view-intro .view-description { max-width: 35ch; font-size: clamp(1rem, 4.1vw, 1.125rem); line-height: 1.65; margin-top: .8rem; }
+  .form-label { font-size: 1rem; }
+  .form-input { min-height: 3.75rem; font-size: 1.0625rem; }
+  .submit-row .button { min-height: 3.75rem; font-size: 1rem; }
+  .form-hint, .form-error { font-size: .875rem; }
+  .asset-slot--hero { top: .25rem; left: 0; right: auto; width: 21vw; height: 24vw; }
+  .asset-slot--sparkles { top: .5rem; left: auto; right: 0; width: 16vw; height: 19vw; }
+  .asset-slot--jellyfish-left { top: 30%; left: 0; width: 10vw; height: 15vw; }
+  .asset-slot--jellyfish-right { top: 23%; width: 13vw; height: 18vw; }
+  .asset-slot--coral-left, .asset-slot--coral-right { bottom: 0; width: 40vw; height: 10rem; }
+  .asset-slot--starfish-right { bottom: 4rem; right: 28%; width: 8vw; height: 8vw; }
+  .asset-slot--form { top: -2.2rem; right: .15rem; width: 3.3rem; height: 5rem; }
+}
+@media (max-width: 359px) {
+  :root { --page-gutter: .875rem; --panel-padding: 1rem; --shadow-card: 5px 7px 0 var(--ink); }
+  .eyebrow { font-size: .6875rem; padding-inline: .9rem; }
+  .form-input { padding-inline: .65rem; font-size: 1rem; }
+}
+@media (max-height: 650px) and (min-width: 640px) {
+  :root { --title-unit: 7rem; }
+  .page-shell { padding-top: 1.75rem; }
+}
