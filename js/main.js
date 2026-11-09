@@ -1,62 +1,80 @@
 (() => {
   'use strict';
 
-  // Path asli tetap. Timpa PNG pada path ini; tidak perlu mengubah kode.
+  // PNG diprioritaskan; WebP dengan nama dasar sama dicoba jika PNG tidak ada.
+  // Path dekorasi pengguna dipertahankan. Tidak ada placeholder debug/emoji.
   const ASSET_REGISTRY = Object.freeze({
-    background: ['assets/images/bawah-laut.png', 'BACKGROUND'],
-    form: ['assets/images/gelembung.png', 'FORM ACCENT'],
-    hero: ['assets/jellyfish/jellyfish-hero.png', 'JELLYFISH HERO'],
-    left: ['assets/jellyfish/jellyfish-left.png', 'JELLYFISH LEFT'],
-    right: ['assets/jellyfish/spombob-ramai.png', 'JELLYFISH RIGHT'],
-    checking: ['assets/jellyfish/jellyfish-checking.png', 'JELLYFISH CHECKING'],
-    accepted: ['assets/jellyfish/jellyfish-accepted.png', 'JELLYFISH ACCEPTED'],
-    notAccepted: ['assets/jellyfish/jellyfish-not-accepted.png', 'JELLYFISH NOT ACCEPTED'],
-    coralLeft: ['assets/coral/jellyfish-hero.png', 'CORAL LEFT'],
-    coralRight: ['assets/coral/spombob-ramai.png', 'CORAL RIGHT'],
-    starfishLeft: ['assets/starfish/starfish-left.png', 'BINTANG LAUT LEFT'],
-    starfishRight: ['assets/starfish/gelembung.png', 'BINTANG LAUT RIGHT'],
-    sparkles: ['assets/sparkles/sparkle-cluster.png', 'SPARKLE']
+    background: 'assets/images/elemen-conto.png',
+    form: 'assets/starfish/starfishh.png',
+    hero: 'assets/jellyfish/bunga-banyak.png',
+    left: 'assets/jellyfish/ubur-ubur.png',
+    right: 'assets/images/elemen-conto.png',
+    accepted: 'assets/images/emoji-seneng.png',
+    notAccepted: 'assets/images/emoji-sedih.png',
+    notFound: 'assets/images/emoji-bingung.png',
+    coralLeft: 'assets/coral/coral.png',
+    coralRight: 'assets/coral/rumputlaut.png',
+    starfishLeft: 'assets/images/elemen-conto.png',
+    starfishRight: 'assets/images/elemen-conto.png',
+    sparkles: 'assets/jellyfish/bunga.png'
   });
+  const assetImages = new Map();
+  const assetLoads = new Map();
 
-  function initializeAssets() {
-    const isLocal = location.protocol === 'file:' || ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
-    // Hanya lingkungan lokal; ?assets=off untuk melihat tampilan produksi.
-    const showGuides = isLocal && new URLSearchParams(location.search).get('assets') !== 'off';
-    document.querySelectorAll('[data-asset]').forEach((slot) => {
-      const [source, label] = ASSET_REGISTRY[slot.dataset.asset];
+  function loadAsset(key) {
+    if (assetLoads.has(key)) return assetLoads.get(key);
+    const source = ASSET_REGISTRY[key];
+    const promise = new Promise((resolve) => {
+      if (!source) return resolve(null);
       const image = new Image();
+      let triedWebp = false;
       image.alt = '';
       image.draggable = false;
       image.decoding = 'async';
-      slot.dataset.status = 'loading';
-      function showEmpty(status) {
-        slot.dataset.status = status;
-        slot.replaceChildren();
-        slot.hidden = !showGuides;
-        if (showGuides) {
-          const guide = document.createElement('span');
-          guide.className = 'asset-placeholder';
-          guide.textContent = label;
-          guide.title = `${label} — ${source}`;
-          guide.dataset.shortLabel = label.replace('JELLYFISH', 'JF').replace('BINTANG LAUT', 'BL').replace('LEFT', 'L').replace('RIGHT', 'R').replace('HERO', 'H').replace('SPARKLE', 'SP').replace('BACKGROUND', 'BG');
-          slot.append(guide);
-        }
+      function nextSource() {
+        if (triedWebp) return resolve(null);
+        triedWebp = true;
+        image.src = source.replace(/\.png$/, '.webp');
       }
       image.onload = () => {
-        // Paket awal berisi PNG transparan 1×1. Ini bukan ilustrasi final.
-        if (image.naturalWidth <= 1 || image.naturalHeight <= 1) {
-          showEmpty('placeholder');
-          return;
-        }
-        image.width = image.naturalWidth;
-        image.height = image.naturalHeight;
-        slot.replaceChildren(image);
-        slot.dataset.status = 'loaded';
-        slot.hidden = false;
+        if (image.naturalWidth <= 1 || image.naturalHeight <= 1) return nextSource();
+        assetImages.set(key, image);
+        resolve(image);
       };
-      image.onerror = () => showEmpty('missing');
+      image.onerror = nextSource;
       image.src = source;
     });
+    assetLoads.set(key, promise);
+    return promise;
+  }
+
+  async function fillAsset(slot, key) {
+    slot.dataset.asset = key;
+    slot.dataset.status = 'loading';
+    slot.hidden = true;
+    slot.replaceChildren();
+    const image = await loadAsset(key);
+    if (slot.dataset.asset !== key) return;
+    slot.dataset.status = image ? 'loaded' : 'missing';
+    if (image) slot.replaceChildren(image.cloneNode());
+    slot.hidden = !image;
+  }
+
+  function initializeAssets() {
+    document.querySelectorAll('[data-asset]').forEach((slot) => fillAsset(slot, slot.dataset.asset));
+    ['accepted', 'notAccepted', 'notFound'].forEach(loadAsset);
+  }
+
+  function renderGacha(key) {
+    const visual = byId('gacha').querySelector('.gacha-visual');
+    const image = assetImages.get(key);
+    if (image) visual.replaceChildren(image.cloneNode());
+    else {
+      const orb = document.createElement('span');
+      orb.className = 'gacha-orb';
+      visual.replaceChildren(orb);
+    }
+    visual.dataset.asset = key || 'neutral';
   }
 
   function normalizeNim(value) {
@@ -74,70 +92,32 @@
     if (!/[0-9]/.test(value)) return 'NIM perlu memuat minimal satu angka.';
     return '';
   }
-  /**
-   * Satu titik integrasi backend. Belum ada fetch atau data peserta lokal.
-   * Ganti ISI fungsi ini saat layanan resmi siap; gunakan options.signal untuk fetch.
-   * Kontrak lengkap dan kewajiban backend: docs/BACKEND.md.
-   * @param {string} nim NIM yang sudah dinormalisasi dan divalidasi.
-   * @param {{signal: AbortSignal}} options Sinyal pembatalan ketika timeout.
-   * @returns {Promise<object>} Respons dengan status kontrak.
-   */
+  // Adapter API tunggal. Status HTTP tidak disamakan dengan hasil seleksi.
   async function checkNim(nim, options = {}) {
-      try {
-          const response = await fetch("/api/cek-nim", {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json"
-              },
-              body: JSON.stringify({ nim }),
-              cache: "no-store",
-              signal: options.signal
-          });
-
-          const hasil = await response.json();
-
-          // Tangani respons error dari server
-          if (!response.ok) {
-              console.error(
-                  "API gagal:",
-                  response.status,
-                  hasil.message
-              );
-
-              return {
-                  status: "service-unavailable"
-              };
-          }
-
-          // Pastikan hasil sesuai tiga kondisi seleksi
-          const statusValid = [
-              "accepted",
-              "not-accepted",
-              "not-found"
-          ];
-
-          if (!statusValid.includes(hasil.status)) {
-              return {
-                  status: "service-unavailable"
-              };
-          }
-
-          return hasil;
-
-      } catch (error) {
-          // Pertahankan mekanisme pembatalan request
-          if (error.name === "AbortError") {
-              throw error;
-          }
-
-          console.error("Koneksi backend gagal:", error);
-
-          return {
-              status: "service-unavailable"
-          };
+    const response = await fetch('/api/cek-nim', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nim }),
+      cache: 'no-store',
+      signal: options.signal
+    });
+    // Proses 429 sebelum membaca JSON: proxy juga bisa mengirim body non-JSON.
+    if (response.status === 429) {
+      const header = response.headers.get('Retry-After');
+      let seconds = null;
+      if (header && /^\d+$/.test(header.trim())) seconds = Number(header);
+      else if (header && Number.isFinite(Date.parse(header))) {
+        seconds = Math.max(0, (Date.parse(header) - Date.now()) / 1000);
       }
+      return {
+        status: 'rate-limited',
+        retryAfter: Number.isFinite(seconds) && seconds >= 0 ? Math.ceil(seconds) : null
+      };
+    }
+    if (response.status === 503) return { status: 'service-unavailable' };
+    if (!response.ok) return { status: 'error' };
+    return response.json();
   }
-
 
   async function requestResult(nim) {
     const controller = new AbortController();
@@ -166,10 +146,10 @@
     if (!result || typeof result !== 'object') throw new Error('Respons tidak valid.');
     if (['accepted', 'not-accepted'].includes(result.status)) {
       if (result.nim !== nim || !requiredText(result.name)) throw new Error('Identitas respons tidak sesuai.');
-      if (result.status === 'accepted' && !requiredText(result.division)) throw new Error('Divisi tidak tersedia.');
+      // Hapus baris: if (result.status === 'accepted' && !requiredText(result.division)) ...
       return result;
     }
-    if (['not-found', 'service-unavailable', 'error'].includes(result.status)) return result;
+    if (['not-found', 'service-unavailable', 'rate-limited', 'error'].includes(result.status)) return result;
     throw new Error('Status respons tidak dikenali.');
   }
 
@@ -194,9 +174,10 @@
     'not-accepted': byId('result-view'),
     'not-found': byId('not-found-view'),
     'service-unavailable': byId('service-unavailable-view'),
+    'rate-limited': byId('rate-limited-view'),
     error: byId('error-view')
   };
-  const RESULT_EMOTES = Object.freeze({ accepted: '🤩', 'not-accepted': '😥', 'not-found': '🤔' });
+  const RESULT_ASSETS = Object.freeze({ accepted: 'accepted', 'not-accepted': 'notAccepted', 'not-found': 'notFound' });
   let activeGacha = null;
   let activeRequest = null;
   let currentState = 'landing';
@@ -252,33 +233,54 @@
   }
 
   function clearResult() {
-    ['result-heading', 'result-emote', 'result-name', 'result-status', 'result-message', 'result-division', 'coordinator-contact']
+    ['result-heading', 'result-name', 'result-message']
       .forEach((id) => { byId(id).textContent = ''; });
-    ['result-name', 'result-summary', 'result-message', 'coordinator-contact']
+    ['result-name', 'result-message', 'coordinator-contact']
       .forEach((id) => { byId(id).hidden = true; });
     byId('coordinator-contact').removeAttribute('href');
+    const media = byId('result-media');
+    media.dataset.asset = '';
+    media.hidden = true;
+    media.replaceChildren();
+  }
+
+
+
+  function updateRateLimitNotice(result) {
+    if (result.status !== 'rate-limited') return;
+    const seconds = result.retryAfter;
+    const wait = Number.isFinite(seconds) && seconds >= 0
+      ? seconds === 0 ? 'Silakan coba lagi sekarang.' : `Silakan coba lagi sekitar ${Math.ceil(seconds / 60)} menit.`
+      : 'Silakan coba lagi beberapa saat lagi.';
+    byId('rate-limited-message').textContent = `Batas pencarian sudah tercapai. ${wait}`;
+  }
+  // Efek dekoratif tidak boleh mengubah hasil API menjadi halaman error.
+  function resultEffects(method, ...args) {
+    try {
+      Promise.resolve(window.StarUpResultEffects?.[method]?.(...args)).catch((error) => {
+        console.warn('[STAR UP emote rain] Efek dilewati:', error);
+      });
+    } catch (error) {
+      console.warn('[STAR UP emote rain] Efek dilewati:', error);
+    }
   }
 
   function renderResult(result) {
     clearResult();
     if (!['accepted', 'not-accepted'].includes(result.status)) return;
     const accepted = result.status === 'accepted';
-    byId('result-emote').textContent = RESULT_EMOTES[result.status];
-    byId('result-heading').textContent = accepted ? 'SELAMATTT!!' : 'YAHHH...';
+    fillAsset(byId('result-media'), RESULT_ASSETS[result.status]);
+    byId('result-heading').textContent = accepted ? 'SELAMAT KAMU LOLOS!' : 'YAHHH...';
     if (!accepted) {
       byId('result-message').hidden = false;
-      byId('result-message').textContent = 'Kamu belum lolos, tetap semangat ya!';
+      byId('result-message').textContent = 'Kamu belum lolos, tetep semangat yah..';
       return;
     }
     byId('result-name').hidden = false;
     byId('result-name').textContent = result.name;
-    byId('result-summary').hidden = false;
-    byId('result-status').textContent = 'Lolos';
-    byId('result-division').textContent = result.division;
     const contactUrl = whatsappUrl(result.coordinator?.whatsapp);
     if (contactUrl) {
       byId('coordinator-contact').href = contactUrl;
-      byId('coordinator-contact').textContent = `Hubungi Koor ${result.division}`;
       byId('coordinator-contact').hidden = false;
     }
   }
@@ -286,6 +288,7 @@
   async function handleSubmit(event) {
     event.preventDefault();
     if (busy || currentState !== 'landing' || event.isComposing) return;
+    resultEffects('clear');
     validationStarted = true;
     input.value = normalizeNim(input.value);
     const message = validateNim(input.value);
@@ -302,19 +305,24 @@
     let resultAnnouncement = 'Pencarian gagal. Silakan coba lagi.';
     try {
       await setState('checking');
-      activeGacha = window.StarUpMotion?.startGacha?.(byId('gacha'), Object.values(RESULT_EMOTES)) || null;
+      activeGacha = window.StarUpMotion?.startGacha?.(byId('gacha'), Object.values(RESULT_ASSETS), renderGacha) || null;
       const result = validateResponse(await requestResult(nim), nim);
-      await activeGacha?.finish(RESULT_EMOTES[result.status] || null);
+      updateRateLimitNotice(result);
+      await activeGacha?.finish(RESULT_ASSETS[result.status] || null);
       renderResult(result);
       resultAnnouncement = {
-        accepted: `Kamu diterima di divisi ${result.division}.`,
+        accepted: 'Selamat, kamu lolos!',
         'not-accepted': 'Kamu belum lolos. Tetap semangat, ya!',
         'not-found': 'NIM tidak ditemukan.',
         'service-unavailable': 'Layanan pengecekan hasil belum tersedia.',
+        'rate-limited': byId('rate-limited-message').textContent,
         error: 'Pencarian gagal. Silakan coba lagi.'
       }[result.status];
       await setState(result.status);
-    } catch {
+      resultEffects('play', result.status);
+    } catch (error) {
+      console.error('[STAR UP pencarian] Pencarian/render gagal:', error);
+      resultEffects('clear');
       activeGacha?.cancel();
       clearResult();
       await setState('error');
@@ -333,6 +341,7 @@
     try {
       activeGacha?.cancel();
       activeGacha = null;
+      resultEffects('clear');
       // Coba lagi mempertahankan NIM; cek NIM lain mengosongkan input.
       if (event.currentTarget.dataset.action === 'reset') form.reset();
       validationStarted = false;
@@ -340,6 +349,7 @@
       await setState('landing');
       clearResult();
       announcement.textContent = '';
+      byId('rate-limited-message').textContent = '';
     } finally {
       setBusy(false);
       focusElement(input);
@@ -351,6 +361,7 @@
   form.addEventListener('submit', handleSubmit);
   resetButtons.forEach((button) => button.addEventListener('click', reset));
   window.addEventListener('pagehide', () => {
+    resultEffects('clear');
     activeGacha?.cancel();
     activeRequest?.abort();
   });

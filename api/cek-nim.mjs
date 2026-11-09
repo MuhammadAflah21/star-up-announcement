@@ -1,4 +1,6 @@
 
+import { checkRateLimit } from "../lib/rate-limit.mjs";
+import { resolveContactPerson } from "../lib/contact-person.mjs";
 import { createClient } from "@supabase/supabase-js";
 
 // API untuk mengecek hasil seleksi STAR UP
@@ -37,7 +39,7 @@ export default async function handler(req, res) {
     }
 
     // Ubah ke uppercase
-    const nim = inputNim.toUpperCase();
+    const nim = inputNim.replace(/[a-z]/g, (letter) => letter.toUpperCase());
 
     // Validasi NIM tepat 9 karakter
     const valid =
@@ -87,6 +89,25 @@ export default async function handler(req, res) {
             }
         );
 
+        // Periksa batas percobaan sebelum mencari peserta
+        const limit = await checkRateLimit(req, supabase);
+
+        if (limit.status === "unavailable") {
+            return res.status(503).json({
+                status: "service-unavailable",
+                message: "Layanan sementara tidak tersedia."
+            });
+        }
+
+        if (limit.status === "blocked") {
+            res.setHeader("Retry-After", String(limit.retryAfter));
+
+            return res.status(429).json({
+                status: "rate-limited",
+                message: "Terlalu banyak percobaan. Coba lagi nanti."
+            });
+        }
+
         // Cari peserta berdasarkan NIM
         const { data: peserta, error: pesertaError } =
             await supabase
@@ -106,6 +127,11 @@ export default async function handler(req, res) {
             });
         }
 
+        // Data tidak lengkap adalah error server, bukan hasil seleksi.
+        if (peserta.nim !== nim || typeof peserta.nama !== "string" || !peserta.nama.trim()) {
+            throw new Error("Identitas peserta tidak valid.");
+        }
+
         // Kondisi 2: Peserta tidak diterima
         if (peserta.status === "not-accepted") {
             return res.status(200).json({
@@ -120,31 +146,39 @@ export default async function handler(req, res) {
             throw new Error("Status peserta tidak dikenal.");
         }
 
-        // Cari koordinator sesuai divisi
-        const { data: koordinator, error: koorError } =
+        if (typeof peserta.divisi !== "string" || !peserta.divisi.trim()) {
+            throw new Error("Divisi peserta tidak valid.");
+        }
+
+        // Cari CP berdasarkan divisi peserta di Supabase
+        const { data: koordinator, error: koordinatorError } =
             await supabase
                 .from("koordinator")
                 .select("nama, whatsapp")
                 .eq("divisi", peserta.divisi)
                 .maybeSingle();
 
-        if (koorError) {
-            throw koorError;
+        if (koordinatorError) {
+            throw koordinatorError;
         }
+
+        // Format data CP untuk frontend
+        const contactPerson = koordinator
+            ? {
+                name: koordinator.nama,
+                whatsapp: koordinator.whatsapp
+            }
+            : null;
 
         // Kondisi 3: Peserta diterima
         return res.status(200).json({
             status: "accepted",
             nim: peserta.nim,
             name: peserta.nama,
-            division: peserta.divisi,
-            coordinator: koordinator
-                ? {
-                    name: koordinator.nama,
-                    whatsapp: koordinator.whatsapp
-                }
-                : null
+            coordinator: contactPerson,
+            contactPerson: contactPerson
         });
+
 
     } catch (error) {
         console.error(

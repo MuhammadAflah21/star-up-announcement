@@ -7,16 +7,15 @@
 .starup-title__pill { animation: pill-frame-shimmer 3.4s linear infinite; }
 .view:not([hidden]) { animation: view-enter 260ms var(--ease-soft) both; }
 .view.is-leaving:not([hidden]) { animation: view-exit var(--duration-exit) ease-in both; }
-/* JavaScript mengatur fase; CSS mengatur gerakan emote. */
-.gacha[data-phase="spinning"] .gacha-emote { animation: gacha-turn 190ms ease-in-out infinite; }
-.gacha[data-phase="settling"] .gacha-emote { animation: gacha-turn 280ms ease-in-out both; }
-.gacha[data-phase="resolved"] .gacha-emote { animation: gacha-land 480ms var(--ease-soft) both; }
+/* JavaScript mengatur fase; CSS mengatur gerakan gambar/orb. */
+.gacha[data-phase="spinning"] .gacha-visual { animation: gacha-turn 190ms ease-in-out infinite; }
+.gacha[data-phase="settling"] .gacha-visual { animation: gacha-turn 280ms ease-in-out both; }
+.gacha[data-phase="resolved"] .gacha-visual { animation: gacha-land 480ms var(--ease-soft) both; }
 .result-card:not([hidden]) { animation: result-reveal 480ms var(--ease-soft) both; }
 .result-card.is-leaving:not([hidden]) { animation: view-exit var(--duration-exit) ease-in both; }
-.asset-slot--hero img, .asset-slot--jellyfish-left img, .asset-slot--jellyfish-right img, .asset-slot--state img { animation: jellyfish-float 8s ease-in-out infinite; }
+.asset-slot--hero img, .asset-slot--jellyfish-left img, .asset-slot--jellyfish-right img { animation: jellyfish-float 8s ease-in-out infinite; }
 .asset-slot--jellyfish-left img { animation-duration: 10s; animation-delay: -3s; }
 .asset-slot--jellyfish-right img { animation-duration: 9s; animation-delay: -6s; }
-.asset-slot--state img { animation-duration: 7s; animation-delay: -2s; }
 .asset-slot--coral-left img, .asset-slot--coral-right img { transform-origin: center bottom; animation: coral-sway 14s ease-in-out infinite; }
 .asset-slot--coral-right img { animation-duration: 17s; animation-delay: -6s; }
 .asset-slot--starfish-left img, .asset-slot--starfish-right img { animation: starfish-float 12s ease-in-out infinite; }
@@ -25,9 +24,20 @@
 .asset-slot--form img { animation: starfish-float 13s ease-in-out -7s infinite; }
 .button { transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease; }
 .form-input { transition: background-color 180ms ease, box-shadow 180ms ease; }
+/* Layer khusus emote rain: di belakang konten, tidak mengubah layout. */
+.result-effects { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+.result-particle { position: absolute; top: -64px; width: var(--rain-size); height: var(--rain-size); opacity: 0; animation: result-emote-fall var(--rain-duration) linear var(--rain-delay) both; }
+.result-particle-image { display: block; width: 100%; height: 100%; object-fit: contain; }
+@keyframes result-emote-fall {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; }
+  12%, 75% { opacity: .85; }
+  100% { transform: translate3d(var(--rain-drift), calc(100vh + 128px), 0) rotate(var(--rain-rotation)); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .result-effects { display: none; }
+}
 @media (hover: hover) and (pointer: fine) {
-  .button:not(:disabled):hover { transform: translate(-1px, -2px); box-shadow: 4px 6px 0 var(--ink); }
-  .button-primary:not(:disabled):hover { background: #f6c1e6; }
+  .button:not(:disabled):hover { box-shadow: 4px 6px 0 var(--ink); }
   .button-secondary:not(:disabled):hover { background: #cceaff; }
 }
 .button:not(:disabled):active { transform: translate(1px, 2px); box-shadow: 1px 2px 0 var(--ink); }

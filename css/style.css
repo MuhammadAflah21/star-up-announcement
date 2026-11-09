@@ -31,7 +31,7 @@ h1, h2, h3, p, dl, dd { margin: 0; }
 button, input { font: inherit; }
 button, a, input { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid #337ec7; outline-offset: 5px; }
-.view-heading:focus-visible { outline: 3px solid #337ec7; outline-offset: 5px; border-radius: .25rem; }
+.view-heading:focus-visible { outline: none; }
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* Layer 0: base + gambar opsional, lalu dua cahaya. Layer 1: artwork. Layer 2: UI. */
@@ -72,7 +72,7 @@ button, a, input { -webkit-tap-highlight-color: transparent; }
 .form-hint { color: var(--ink-muted); }
 .form-error { min-height: 1.6em; color: var(--error); font-weight: 700; }
 .button { display: inline-flex; align-items: center; justify-content: center; width: 100%; min-width: 0; min-height: 3.5rem; padding: .8rem 1rem; border: var(--border); border-radius: .875rem; box-shadow: var(--shadow-small); color: var(--ink); font-size: .9375rem; font-weight: 900; line-height: 1.4; text-align: center; text-decoration: none; overflow-wrap: anywhere; cursor: pointer; touch-action: manipulation; }
-.button-primary { background: var(--pink); }
+.button-primary, .button-result { background: linear-gradient(110deg, #7ce0f4, #4872ff); }
 .button-secondary { background: var(--paper-blue); }
 .button:disabled { background: #e6bfdc; color: #62506c; box-shadow: 2px 3px 0 #655278; border-color: #655278; cursor: wait; }
 .state-card { gap: 1.25rem; text-align: center; overflow-wrap: anywhere; }
@@ -81,22 +81,25 @@ button, a, input { -webkit-tap-highlight-color: transparent; }
 /* Checking dan hasil memakai kartu yang sama; tidak ada tinggi tetap. */
 .checking-view { gap: 1rem; padding-block: 2rem; justify-items: center; }
 .gacha { display: grid; place-items: center; width: 8rem; height: 8rem; }
-.gacha-emote, .result-emote { font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; font-weight: 400; font-style: normal; line-height: 1; }
-.gacha-emote { display: block; font-size: 6rem; transform-origin: center 65%; }
-.result-card { --emote-size: clamp(4.75rem, 20vw, 6.5rem); margin-top: calc(var(--emote-size) * .55 + 1rem); padding-top: calc(var(--emote-size) * .65 + 1rem); padding-bottom: 1.75rem; gap: 1.25rem; }
-.result-emote { position: absolute; top: 0; left: 50%; translate: -50% -45%; display: grid; place-items: center; width: var(--emote-size); height: var(--emote-size); font-size: var(--emote-size); pointer-events: none; }
-.result-emote > span { display: block; filter: drop-shadow(3px 5px 0 var(--ink)); }
-.result-intro { display: grid; align-items: center; gap: .75rem; min-width: 0; }
-.result-heading { font-size: clamp(1.85rem, 7.4vw, 2.5rem); font-weight: 800; line-height: 1.2; letter-spacing: -.035em; }
-.participant-name { min-width: 0; font-size: clamp(1.5rem, 6.2vw, 2rem); font-weight: 800; line-height: 1.35; overflow-wrap: anywhere; }
-.result-summary, .result-message { min-width: 0; color: var(--ink); font-size: clamp(1rem, 4.5vw, 1.375rem); line-height: 1.6; overflow-wrap: anywhere; }
-.result-actions { display: grid; gap: 1rem; margin-top: .75rem; min-width: 0; }
-.result-actions .button { min-height: 3.75rem; border-radius: 1.25rem; }
-.button-result { background: linear-gradient(110deg, #7ce0f4, #4872ff); }
-/* Hijau hanya untuk aksi WhatsApp, sesuai tombol pada referensi hasil. */
-.button-contact { background: #187b40; color: var(--paper); }
+.gacha-visual { display: grid; place-items: center; width: 100%; height: 100%; transform-origin: center 65%; }
+.gacha-visual img { width: 100%; height: 100%; object-fit: contain; }
+.gacha-orb { display: block; width: 4rem; height: 4rem; border: var(--border); border-radius: 50%; background: linear-gradient(135deg, #7ce0f4, #dcd2ff 60%, var(--pink)); box-shadow: var(--shadow-small); }
+.result-card { --result-art-size: clamp(5rem, 22vw, 6.5rem); --result-padding: clamp(1.25rem, 4vw, 2rem); padding-block: var(--result-padding); gap: 1rem; justify-items: center; border-radius: 1.5rem; }
+.result-card:has(.result-media:not([hidden])) { margin-top: calc(var(--result-art-size) * .5 + .75rem); }
+.result-media { width: var(--result-art-size); aspect-ratio: 1; margin: calc(-1 * var(--result-padding) - var(--result-art-size) * .5) auto 0; pointer-events: none; }
+.result-media img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.result-intro { display: grid; justify-items: center; gap: .75rem; width: 100%; min-width: 0; }
+.result-heading { font-size: clamp(1.125rem, 5.2vw, 1.75rem); font-weight: 800; line-height: 1.3; letter-spacing: -.025em; }
+.participant-name { min-width: 0; font-size: clamp(1rem, 4vw, 1.125rem); font-weight: 400; line-height: 1.5; overflow-wrap: anywhere; }
+.result-message { min-width: 0; color: var(--ink); font-size: clamp(.9375rem, 3.7vw, 1.125rem); line-height: 1.6; overflow-wrap: anywhere; }
+.result-actions { display: grid; gap: clamp(.5rem, 2vw, 1rem); margin-top: .25rem; width: 100%; max-width: 30rem; min-width: 0; }
+.result-actions:has(.button-contact:not([hidden])) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.result-actions .button { min-height: 3rem; padding: .65rem .125rem; border-radius: 1rem; font-size: clamp(.6875rem, 2.8vw, .875rem); font-weight: 700; }
+.button-contact { gap: .125rem; background: #2fa64b; color: var(--paper); }
+.contact-icon { width: .75rem; height: .75rem; flex: 0 0 .75rem; }
+.button-contact span { white-space: nowrap; }
 .supporting-message { padding: .75rem 1rem; border: 1.5px solid #96799f; border-radius: .875rem; background: #f6e1f2; color: var(--ink); font-size: .875rem; }
-.site-footer { position: relative; text-align: center; font-size: .75rem; color: #e1dcf5; }
+.site-footer { position: relative; z-index: 2; text-align: center; font-size: .75rem; color: #e1dcf5; }
 .site-footer strong { color: var(--paper); }
 
 /* Slot tidak menangkap klik. Gambar baru masuk DOM setelah load berhasil. */
@@ -115,8 +118,4 @@ button, a, input { -webkit-tap-highlight-color: transparent; }
 .asset-slot--starfish-left { top: 11%; left: 8%; width: min(9vw, 8rem); height: min(9vw, 8rem); }
 .asset-slot--starfish-right { bottom: 11%; right: 21%; width: min(8vw, 7rem); height: min(8vw, 7rem); }
 .asset-slot--sparkles { top: 4%; left: 29%; width: min(7vw, 7rem); height: min(6vw, 6rem); }
-.asset-slot--form { z-index: 0; top: -2.4rem; right: -.25rem; width: 4.5rem; height: 3.25rem; }
-.asset-slot--state { position: relative; width: 6rem; height: 6rem; margin-inline: auto; }
-.asset-placeholder { display: grid; place-items: center; width: 100%; height: 100%; padding: .25rem; border: 1px dashed rgb(212 241 255 / 65%); border-radius: .75rem; background: rgb(43 102 147 / 18%); color: #d9efff; font: 700 clamp(.5rem, 1vw, .6875rem)/1.4 var(--font-ui); text-align: center; overflow-wrap: anywhere; }
-.asset-slot--background .asset-placeholder { height: 1.5rem; width: fit-content; margin: .4rem; border-radius: .25rem; font-size: .5rem; }
-.asset-slot--form .asset-placeholder, .asset-slot--state .asset-placeholder { color: #353267; border-color: #6e6ba0; background: rgb(203 194 244 / 60%); }
+.asset-slot--form { z-index: 0; top: -4rem; right: -4rem; width: 10rem; height: 7rem; }

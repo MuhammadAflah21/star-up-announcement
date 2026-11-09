@@ -31,15 +31,14 @@
   }
 
   // Satu controller untuk satu pencarian. Tidak memilih atau mengambil hasil.
-  function startGacha(container, sequence) {
-    const emote = container.querySelector('.gacha-emote');
+  function startGacha(container, sequence, renderVisual) {
     const startedAt = performance.now();
     const waits = new Map();
     let loopTimer = null;
     let index = 0;
     let active = true;
     let finishing = false;
-    let finalEmote = null;
+    let finalAsset = null;
 
     function stopLoop() {
       clearTimeout(loopTimer);
@@ -61,7 +60,7 @@
 
     function spin() {
       if (!active || reducedMotion.matches) return;
-      emote.textContent = sequence[index];
+      renderVisual(sequence[index]);
       index = (index + 1) % sequence.length;
       loopTimer = setTimeout(spin, 190);
     }
@@ -72,7 +71,7 @@
       if (!active) return;
       if (reducedMotion.matches) {
         container.dataset.phase = 'static';
-        emote.textContent = finalEmote || '🤔';
+        renderVisual(finalAsset);
       } else if (!finishing) {
         container.dataset.phase = 'spinning';
         spin();
@@ -86,7 +85,7 @@
       releaseWaits();
       reducedMotion.removeEventListener('change', onMotionChange);
       container.dataset.phase = 'idle';
-      emote.textContent = '🤔';
+      renderVisual(null);
     }
 
     async function finish(target) {
@@ -97,18 +96,18 @@
         cancel();
         return;
       }
-      finalEmote = target;
+      finalAsset = target;
       // Hasil cepat cukup diberi satu putaran; hasil lambat tidak menunggu lagi.
       await wait(Math.max(0, 570 - (performance.now() - startedAt)));
       if (!active) return;
       stopLoop();
       if (!reducedMotion.matches) {
         container.dataset.phase = 'settling';
-        emote.textContent = sequence[index];
+        renderVisual(sequence[index]);
         await wait(280);
       }
       if (!active) return;
-      emote.textContent = finalEmote;
+      renderVisual(finalAsset);
       container.dataset.phase = reducedMotion.matches ? 'static' : 'resolved';
       await wait(480);
     }
